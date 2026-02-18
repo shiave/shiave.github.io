@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arshia Verma | Neuroscience Researcher</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  :root {
+    --bg: #070b12;
+    --bg2: #0c1220;
+    --surface: #111827;
+    --border: rgba(99,179,237,0.12);
+    --glow-blue: #63b3ed;
+    --glow-cyan: #4fd1c5;
+    --glow-violet: #9f7aea;
+    --glow-rose: #fc8181;
+    --glow-amber: #f6ad55;
+    --text: #e2e8f0;
+    --text-muted: #718096;
+    --text-dim: #4a5568;
+    --accent: #63b3ed;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  #stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 3rem;
+    background: rgba(7,11,18,0.7);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+    color: var(--glow-cyan);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover { color: var(--glow-cyan); }
+
+  #hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 3rem;
+  }
+
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--glow-cyan);
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: #f0f4f8;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.4s;
+  }
+
+  h1 em { font-style: italic; color: var(--glow-cyan); }
+
+  .hero-sub {
+    margin-top: 1.2rem;
+    font-size: 1rem;
+    color: var(--text-muted);
+    max-width: 520px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.6s;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: center;
+    margin-top: 1.8rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.8s;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+    border-radius: 2rem;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.02);
+  }
+
+  /* ── BRAIN SECTION ── */
+  #brain-section {
+    position: relative;
+    z-index: 1;
+    padding: 2rem 2rem 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 400;
+    color: #f0f4f8;
+    margin-bottom: 0.6rem;
+    text-align: center;
+  }
+
+  .section-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+
+  /* ── SVG BRAIN ── */
+  #brain-wrapper {
+    position: relative;
+    width: min(820px, 96vw);
+    user-select: none;
+  }
+
+  #brain-svg-main {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 0 40px rgba(99,179,237,0.08));
+  }
+
+  .brain-reg { cursor: pointer; }
+  .brain-reg .lobe-fill { transition: opacity 0.35s; }
+  .brain-reg:hover .lobe-fill { opacity: 0.7; }
+  .hl-overlay { transition: opacity 0.4s; }
+
+  #region-buttons {
+    display: flex;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1.2rem;
+  }
+
+  .rbtn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.28rem 0.75rem;
+    border-radius: 2rem;
+    border: 1px solid rgba(255,255,255,0.14);
+    color: rgba(255,255,255,0.38);
+    background: rgba(255,255,255,0.03);
+    cursor: pointer;
+    transition: all 0.25s;
+    white-space: nowrap;
+  }
+
+  .rbtn:hover { opacity: 0.8; }
+  .rbtn.active {
+    color: var(--btn-color, #63b3ed);
+    border-color: var(--btn-color, #63b3ed);
+    background: rgba(0,0,0,0.3);
+    box-shadow: 0 0 12px -4px var(--btn-color, #63b3ed);
+  }
+
+  /* ── RESEARCH PANEL ── */
+  #research-panel {
+    width: min(900px, 95vw);
+    margin-top: 2rem;
+    min-height: 220px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+
+  #research-panel.visible { opacity: 1; transform: translateY(0); }
+
+  #research-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--panel-accent, var(--glow-blue));
+    transition: background 0.4s;
+  }
+
+  .panel-region-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--panel-accent, var(--glow-blue));
+    margin-bottom: 0.5rem;
+    transition: color 0.4s;
+  }
+
+  .panel-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: #f0f4f8;
+    margin-bottom: 1rem;
+  }
+
+  .panel-desc {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.75;
+    margin-bottom: 1.2rem;
+    max-width: 72ch;
+  }
+
+  .panel-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.4rem; }
+
+  .panel-bullets li {
+    font-size: 0.83rem;
+    color: var(--text);
+    line-height: 1.6;
+    padding-left: 1.2rem;
+    position: relative;
+  }
+
+  .panel-bullets li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--panel-accent, var(--glow-blue));
+    transition: color 0.4s;
+  }
+
+  .pub-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .pub-item {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-style: italic;
+    padding-left: 1.2rem;
+    position: relative;
+  }
+
+  .pub-item::before {
+    content: '◆';
+    position: absolute;
+    left: 0;
+    font-size: 0.5rem;
+    top: 0.3rem;
+    color: var(--panel-accent, var(--glow-blue));
+    transition: color 0.4s;
+  }
+
+  .pub-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--glow-cyan);
+    background: rgba(79,209,197,0.1);
+    border: 1px solid rgba(79,209,197,0.2);
+    padding: 0.1rem 0.5rem;
+    border-radius: 2rem;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    font-style: normal;
+  }
+
+  .hint-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 1rem;
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+
+  /* ── CONTENT SECTIONS ── */
+  .content-section {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+  }
+
+  .section-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: #f0f4f8;
+  }
+
+  .section-header .mono-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .exp-grid { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .exp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .exp-card:hover { border-color: rgba(99,179,237,0.3); transform: translateX(4px); }
+
+  .exp-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--card-accent, var(--glow-blue));
+    border-radius: 3px 0 0 3px;
+  }
+
+  .exp-role { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: #f0f4f8; margin-bottom: 0.2rem; }
+  .exp-org { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em; color: var(--card-accent, var(--glow-blue)); margin-bottom: 0.6rem; }
+  .exp-date { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text-dim); margin-bottom: 1rem; }
+
+  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; }
+  .exp-bullets li { font-size: 0.82rem; color: var(--text-muted); line-height: 1.65; padding-left: 1.2rem; position: relative; }
+  .exp-bullets li::before { content: '—'; position: absolute; left: 0; color: var(--text-dim); }
+
+  .pubs-list { display: flex; flex-direction: column; gap: 1.2rem; }
+
+  .pub-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.4rem 1.8rem;
+    transition: border-color 0.3s;
+  }
+  .pub-card:hover { border-color: rgba(159,122,234,0.4); }
+  .pub-card-title { font-size: 0.88rem; color: var(--text); line-height: 1.7; margin-bottom: 0.5rem; font-style: italic; }
+  .pub-card-status { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--glow-violet); background: rgba(159,122,234,0.1); border: 1px solid rgba(159,122,234,0.2); padding: 0.15rem 0.6rem; border-radius: 2rem; display: inline-block; }
+
+  .pres-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width: 640px) { .pres-grid { grid-template-columns: 1fr; } }
+
+  .pres-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.5rem; transition: border-color 0.3s, transform 0.3s; }
+  .pres-card:hover { border-color: rgba(79,209,197,0.3); transform: translateY(-2px); }
+  .pres-type { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--glow-cyan); margin-bottom: 0.4rem; }
+  .pres-title { font-size: 0.82rem; color: var(--text); line-height: 1.6; margin-bottom: 0.4rem; font-style: italic; }
+  .pres-venue { font-size: 0.73rem; color: var(--text-dim); line-height: 1.5; }
+  .pres-date { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--text-dim); margin-top: 0.4rem; }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<nav>
+  <span class="nav-logo">Arshia Verma</span>
+  <ul class="nav-links">
+    <li><a href="#brain-section">Research</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#publications">Publications</a></li>
+    <li><a href="#presentations">Presentations</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <p class="hero-label">Neuroscience · Bioinformatics · Machine Learning</p>
+  <h1>Arshia <em>Verma</em></h1>
+  <p class="hero-sub">Undergraduate researcher mapping the molecular architecture of the brain — from binge-drinking gene expression to neuroinflammation, ASD, and computational drug discovery.</p>
+  <div class="hero-tags">
+    <span class="tag">RNA-seq</span>
+    <span class="tag">snRNA-seq</span>
+    <span class="tag">Machine Learning</span>
+    <span class="tag">EEG · CNNs</span>
+    <span class="tag">Cheminformatics</span>
+    <span class="tag">UT Austin</span>
+    <span class="tag">Merck</span>
+  </div>
+</section>
+
+<section id="brain-section">
+  <p class="section-label">Interactive Research Map</p>
+  <h2 class="section-title">The Brain, By Region</h2>
+  <p class="section-desc">Click a region or button below to explore research</p>
+
+  <div id="brain-wrapper">
+    <svg id="brain-svg-main" viewBox="0 0 800 520" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="g-whole" cx="50%" cy="45%" r="55%">
+          <stop offset="0%" stop-color="#1e3448"/><stop offset="100%" stop-color="#0d1e2e"/>
+        </radialGradient>
+        <radialGradient id="g-frontal" cx="38%" cy="38%" r="62%">
+          <stop offset="0%" stop-color="#1c3256"/><stop offset="100%" stop-color="#0d1e38"/>
+        </radialGradient>
+        <radialGradient id="g-parietal" cx="50%" cy="38%" r="58%">
+          <stop offset="0%" stop-color="#1a2d42"/><stop offset="100%" stop-color="#0e1c2e"/>
+        </radialGradient>
+        <radialGradient id="g-temporal" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stop-color="#0e2a2a"/><stop offset="100%" stop-color="#081818"/>
+        </radialGradient>
+        <radialGradient id="g-occipital" cx="60%" cy="45%" r="58%">
+          <stop offset="0%" stop-color="#1e1c3c"/><stop offset="100%" stop-color="#10102a"/>
+        </radialGradient>
+        <radialGradient id="g-cerebellum" cx="50%" cy="40%" r="58%">
+          <stop offset="0%" stop-color="#1e2812"/><stop offset="100%" stop-color="#101808"/>
+        </radialGradient>
+
+        <filter id="f-blue" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="7" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="f-cyan" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="7" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="f-violet" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="7" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="f-amber" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="7" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="f-rose" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="9" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+
+        <clipPath id="bc">
+          <path d="M400,55 C338,48,280,60,242,88 C212,110,192,138,182,166 C164,160,144,164,130,178 C108,196,102,224,108,250 C114,278,132,296,152,308 C156,332,166,354,184,368 C202,384,226,392,248,390 C264,406,284,416,308,418 C330,420,350,412,366,400 C382,412,404,422,428,422 C456,422,480,408,494,390 C518,394,542,386,558,368 C576,350,582,324,580,298 C598,284,612,262,612,238 C614,212,602,186,584,170 C568,156,546,150,526,154 C516,128,494,104,466,86 C438,66,400,55,400,55Z"/>
+        </clipPath>
+      </defs>
+
+      <!-- Outer atmospheric glow -->
+      <ellipse cx="400" cy="232" rx="222" ry="188" fill="none" stroke="rgba(99,179,237,0.05)" stroke-width="35"/>
+      <ellipse cx="400" cy="232" rx="210" ry="176" fill="none" stroke="rgba(99,179,237,0.04)" stroke-width="20"/>
+
+      <!-- ── WHOLE BRAIN BASE ── -->
+      <g id="reg-whole" class="brain-reg" onclick="selectRegion('whole')">
+        <path class="lobe-fill" d="M400,55 C338,48,280,60,242,88 C212,110,192,138,182,166 C164,160,144,164,130,178 C108,196,102,224,108,250 C114,278,132,296,152,308 C156,332,166,354,184,368 C202,384,226,392,248,390 C264,406,284,416,308,418 C330,420,350,412,366,400 C382,412,404,422,428,422 C456,422,480,408,494,390 C518,394,542,386,558,368 C576,350,582,324,580,298 C598,284,612,262,612,238 C614,212,602,186,584,170 C568,156,546,150,526,154 C516,128,494,104,466,86 C438,66,400,55,400,55Z"
+          fill="url(#g-whole)" stroke="rgba(99,179,237,0.25)" stroke-width="1.5"/>
+      </g>
+
+      <!-- ── FRONTAL LOBE (PFC/NAc/Amygdala) ── -->
+      <g id="reg-pfc" class="brain-reg" onclick="selectRegion('pfc')">
+        <path class="lobe-fill" d="M400,57 C352,52,302,64,265,90 C236,110,216,136,206,164 C232,156,262,152,292,158 C314,163,334,175,350,190 C366,178,384,170,402,168 C420,165,440,168,458,177 C474,165,490,150,500,134 C512,114,516,90,508,72 C478,62,440,54,400,57Z"
+          fill="url(#g-frontal)" stroke="rgba(99,179,237,0.14)" stroke-width="1"/>
+        <!-- Frontal gyri -->
+        <g fill="none" stroke="rgba(130,190,255,0.2)" stroke-width="1.3" stroke-linecap="round">
+          <path d="M262,98 C286,90,316,87,344,93 C366,98,386,108,400,120"/>
+          <path d="M248,124 C274,115,306,112,336,118 C360,124,380,136,394,150"/>
+          <path d="M 240,150 C 264,142,294,138,322,144 C 346,150,368,162,382,176"/>
+          <path d="M412,122 C436,114,462,112,482,122 C498,130,508,142,510,158"/>
+          <path d="M410,148 C432,140,456,138,476,148 C492,156,500,170,500,184"/>
+        </g>
+        <!-- Central sulcus hint -->
+        <path d="M318,75 C312,105,310,138,316,168 C320,188,330,206,342,222"
+              fill="none" stroke="rgba(130,190,255,0.14)" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M466,78 C472,108,474,142,468,172 C464,192,452,210,440,226"
+              fill="none" stroke="rgba(130,190,255,0.14)" stroke-width="2.2" stroke-linecap="round"/>
+      </g>
+
+      <!-- ── PARIETAL LOBE (top, shares PFC click since it's functionally related in Arshia's work) ── -->
+      <g id="reg-parietal" class="brain-reg" onclick="selectRegion('pfc')">
+        <path class="lobe-fill" d="M206,164 C198,184,196,206,200,226 C204,246,216,262,230,274 C252,266,276,262,302,262 C328,262,350,266,370,275 C382,262,394,248,402,234 C410,220,414,204,412,190 C410,175,404,165,398,160 C380,166,362,174,346,190 C330,175,312,163,292,158 C262,152,232,156,206,164Z"
+          fill="url(#g-parietal)" stroke="rgba(99,179,237,0.12)" stroke-width="1"/>
+        <!-- Parietal gyri -->
+        <g fill="none" stroke="rgba(130,190,255,0.16)" stroke-width="1.1" stroke-linecap="round">
+          <path d="M222,178 C248,170,276,168,302,174 C324,179,344,190,358,204"/>
+          <path d="M216,204 C244,196,272,194,300,200 C324,205,344,218,356,234"/>
+          <path d="M416,176 C438,170,460,170,476,180 C488,188,492,200,490,214"/>
+          <path d="M414,202 C436,196,458,196,474,206 C486,214,490,228,486,242"/>
+        </g>
+      </g>
+
+      <!-- ── TEMPORAL LOBE / HIPPOCAMPUS ── -->
+      <g id="reg-hipp" class="brain-reg" onclick="selectRegion('hipp')">
+        <!-- Left temporal -->
+        <path class="lobe-fill" d="M130,178 C110,196,104,226,110,254 C116,282,134,302,156,314 C168,298,178,280,184,262 C190,244,192,224,190,206 C188,190,182,176,172,168 C157,163,143,169,130,178Z"
+          fill="url(#g-temporal)" stroke="rgba(79,209,197,0.18)" stroke-width="1"/>
+        <!-- Right temporal -->
+        <path class="lobe-fill" d="M582,180 C600,198,608,226,604,254 C598,282,580,302,558,314 C546,298,538,280,534,262 C528,244,526,224,528,206 C530,190,538,176,548,168 C563,163,577,170,582,180Z"
+          fill="url(#g-temporal)" stroke="rgba(79,209,197,0.18)" stroke-width="1"/>
+        <!-- Left temporal gyri -->
+        <g fill="none" stroke="rgba(79,209,197,0.22)" stroke-width="1" stroke-linecap="round">
+          <path d="M136,194 C148,186,164,184,176,192 C184,198,188,210,186,222"/>
+          <path d="M132,220 C146,212,162,210,174,218 C182,224,184,238,180,250"/>
+          <path d="M132,248 C146,240,162,238,174,246 C182,254,182,268,176,280"/>
+        </g>
+        <!-- Right temporal gyri -->
+        <g fill="none" stroke="rgba(79,209,197,0.22)" stroke-width="1" stroke-linecap="round">
+          <path d="M576,196 C564,188,548,186,536,194 C528,200,526,212,530,224"/>
+          <path d="M578,222 C566,214,550,212,538,220 C530,227,530,242,534,254"/>
+          <path d="M576,250 C564,242,548,240,536,248 C528,256,530,270,536,282"/>
+        </g>
+      </g>
+
+      <!-- ── OCCIPITAL LOBE / VISUAL CORTEX ── -->
+      <g id="reg-cortex" class="brain-reg" onclick="selectRegion('cortex')">
+        <path class="lobe-fill" d="M230,274 C218,290,212,312,214,334 C216,356,228,374,246,386 C266,378,290,372,314,372 C338,372,362,378,382,386 C400,372,412,354,414,332 C416,310,410,290,398,276 C382,268,364,263,344,262 C320,261,298,265,278,272 C260,278,244,284,230,274Z"
+          fill="url(#g-occipital)" stroke="rgba(159,122,234,0.18)" stroke-width="1"/>
+        <!-- Occipital / calcarine gyri -->
+        <g fill="none" stroke="rgba(159,122,234,0.24)" stroke-width="1.2" stroke-linecap="round">
+          <path d="M234,288 C258,280,284,277,310,280 C334,283,356,292,372,306"/>
+          <path d="M226,314 C252,306,280,303,308,306 C334,309,356,320,372,336"/>
+          <path d="M230,342 C255,334,282,331,308,334 C332,337,354,348,368,362"/>
+          <!-- Calcarine sulcus -->
+          <path d="M316,354 C336,346,358,344,378,350 C396,356,408,368,416,380"
+                stroke="rgba(159,122,234,0.3)" stroke-width="1.6"/>
+        </g>
+      </g>
+
+      <!-- ── LATERAL SYLVIAN FISSURE overlay ── -->
+      <g clip-path="url(#bc)" fill="none" pointer-events="none">
+        <path d="M196,210 C228,204,264,200,302,204 C336,208,368,220,394,238"
+              stroke="rgba(180,220,255,0.13)" stroke-width="2.8" stroke-linecap="round"/>
+        <path d="M412,238 C440,220,472,206,508,203 C534,201,556,206,574,216"
+              stroke="rgba(180,220,255,0.13)" stroke-width="2.8" stroke-linecap="round"/>
+        <!-- Longitudinal fissure -->
+        <path d="M400,58 C398,95,396,130,396,165 C396,195,398,225,400,255"
+              stroke="rgba(180,220,255,0.09)" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- Parieto-occipital -->
+        <path d="M372,238 C376,260,376,282,372,302 C368,318,360,334,348,346"
+              stroke="rgba(180,220,255,0.1)" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M432,238 C428,260,428,282,432,302 C436,318,444,334,458,346"
+              stroke="rgba(180,220,255,0.1)" stroke-width="1.6" stroke-linecap="round"/>
+      </g>
+
+      <!-- ── CEREBELLUM ── -->
+      <g id="reg-cerebellum" class="brain-reg" onclick="selectRegion('cerebellum')">
+        <path class="lobe-fill" d="M248,390 C255,400,265,410,280,416 C296,422,314,424,330,422 C314,438,300,450,295,464 C316,474,338,478,358,476 C378,474,398,464,412,452 C424,465,440,476,458,480 C476,484,494,478,504,466 C512,452,510,436,500,424 C516,416,530,404,536,388 C518,386,500,388,484,394 C470,400,456,408,444,416 C430,404,414,394,398,390 C382,386,364,383,348,385 C332,387,316,393,300,398 C284,392,268,386,248,390Z"
+          fill="url(#g-cerebellum)" stroke="rgba(246,173,85,0.22)" stroke-width="1"/>
+        <!-- Cerebellar folia — tight parallel folds characteristic of cerebellum -->
+        <g fill="none" stroke="rgba(246,173,85,0.25)" stroke-width="0.9" stroke-linecap="round">
+          <path d="M272,400 C298,394,326,392,354,394 C380,396,404,404,424,412"/>
+          <path d="M268,414 C294,408,322,406,350,408 C376,410,400,420,420,430"/>
+          <path d="M270,428 C295,422,322,420,348,422 C373,424,396,434,415,445"/>
+          <path d="M278,444 C302,438,328,436,352,438 C374,440,395,450,410,461"/>
+          <path d="M 292,460 C 314,454,338,452,360,455 C380,458,398,468,408,478"/>
+          <!-- Right lobe folia -->
+          <path d="M 448,414 C 460,408,472,406,484,412 C 494,417,500,428,498,440"/>
+          <path d="M 446,430 C 458,424,470,422,482,428 C 492,434,496,446,492,458"/>
+        </g>
+        <!-- Brainstem -->
+        <path d="M 346,416 C 344,436,342,456,346,472 C 354,480,364,480,372,472 C 376,456,374,436,372,416Z"
+              fill="#0e1c10" stroke="rgba(246,173,85,0.18)" stroke-width="1"/>
+        <!-- Vermis line -->
+        <path d="M360,392 C362,408,362,428,360,448 C358,462,354,474,352,484"
+              fill="none" stroke="rgba(246,173,85,0.15)" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="3,3"/>
+      </g>
+
+      <!-- ═══ HIGHLIGHT OVERLAYS ═══ -->
+      <g id="hl-whole" class="hl-overlay" style="display:none" pointer-events="none">
+        <path d="M400,55 C338,48,280,60,242,88 C212,110,192,138,182,166 C164,160,144,164,130,178 C108,196,102,224,108,250 C114,278,132,296,152,308 C156,332,166,354,184,368 C202,384,226,392,248,390 C264,406,284,416,308,418 C330,420,350,412,366,400 C382,412,404,422,428,422 C456,422,480,408,494,390 C518,394,542,386,558,368 C576,350,582,324,580,298 C598,284,612,262,612,238 C614,212,602,186,584,170 C568,156,546,150,526,154 C516,128,494,104,466,86 C438,66,400,55,400,55Z"
+          fill="rgba(252,129,129,0.1)" stroke="#fc8181" stroke-width="2.5" filter="url(#f-rose)"/>
+      </g>
+
+      <g id="hl-pfc" class="hl-overlay" style="display:none" pointer-events="none">
+        <path d="M400,57 C352,52,302,64,265,90 C236,110,216,136,206,164 C232,156,262,152,292,158 C314,163,334,175,350,190 C366,178,384,170,402,168 C420,165,440,168,458,177 C474,165,490,150,500,134 C512,114,516,90,508,72 C478,62,440,54,400,57Z
+          M206,164 C198,184,196,206,200,226 C204,246,216,262,230,274 C252,266,276,262,302,262 C328,262,350,266,370,275 C382,262,394,248,402,234 C410,220,414,204,412,190 C410,175,404,165,398,160 C380,166,362,174,346,190 C330,175,312,163,292,158 C262,152,232,156,206,164Z"
+          fill="rgba(99,179,237,0.16)" stroke="#63b3ed" stroke-width="2" filter="url(#f-blue)"/>
+      </g>
+
+      <g id="hl-hipp" class="hl-overlay" style="display:none" pointer-events="none">
+        <path d="M130,178 C110,196,104,226,110,254 C116,282,134,302,156,314 C168,298,178,280,184,262 C190,244,192,224,190,206 C188,190,182,176,172,168 C157,163,143,169,130,178Z"
+          fill="rgba(79,209,197,0.2)" stroke="#4fd1c5" stroke-width="2" filter="url(#f-cyan)"/>
+        <path d="M582,180 C600,198,608,226,604,254 C598,282,580,302,558,314 C546,298,538,280,534,262 C528,244,526,224,528,206 C530,190,538,176,548,168 C563,163,577,170,582,180Z"
+          fill="rgba(79,209,197,0.2)" stroke="#4fd1c5" stroke-width="2" filter="url(#f-cyan)"/>
+      </g>
+
+      <g id="hl-cortex" class="hl-overlay" style="display:none" pointer-events="none">
+        <path d="M230,274 C218,290,212,312,214,334 C216,356,228,374,246,386 C266,378,290,372,314,372 C338,372,362,378,382,386 C400,372,412,354,414,332 C416,310,410,290,398,276 C382,268,364,263,344,262 C320,261,298,265,278,272 C260,278,244,284,230,274Z"
+          fill="rgba(159,122,234,0.2)" stroke="#9f7aea" stroke-width="2" filter="url(#f-violet)"/>
+      </g>
+
+      <g id="hl-cerebellum" class="hl-overlay" style="display:none" pointer-events="none">
+        <path d="M248,390 C255,400,265,410,280,416 C296,422,314,424,330,422 C314,438,300,450,295,464 C316,474,338,478,358,476 C378,474,398,464,412,452 C424,465,440,476,458,480 C476,484,494,478,504,466 C512,452,510,436,500,424 C516,416,530,404,536,388 C518,386,500,388,484,394 C470,400,456,408,444,416 C430,404,414,394,398,390 C382,386,364,383,348,385 C332,387,316,393,300,398 C284,392,268,386,248,390Z"
+          fill="rgba(246,173,85,0.18)" stroke="#f6ad55" stroke-width="2" filter="url(#f-amber)"/>
+      </g>
+
+      <!-- ═══ ANATOMICAL LABELS ═══ -->
+      <g font-family="'DM Mono', monospace" pointer-events="none">
+        <!-- Frontal -->
+        <text x="360" y="103" fill="rgba(99,179,237,0.55)" text-anchor="middle" font-size="10" letter-spacing="2">FRONTAL LOBE</text>
+        <text x="360" y="117" fill="rgba(99,179,237,0.38)" text-anchor="middle" font-size="8" letter-spacing="1">PFC · NAc · Amygdala</text>
+        <!-- Parietal -->
+        <text x="314" y="222" fill="rgba(99,179,237,0.35)" text-anchor="middle" font-size="8.5" letter-spacing="1.5">PARIETAL</text>
+        <!-- Temporal left -->
+        <text x="150" y="248" fill="rgba(79,209,197,0.5)" text-anchor="middle" font-size="8" letter-spacing="1" transform="rotate(-90,150,248)">TEMPORAL</text>
+        <!-- Temporal right -->
+        <text x="562" y="248" fill="rgba(79,209,197,0.5)" text-anchor="middle" font-size="8" letter-spacing="1" transform="rotate(90,562,248)">TEMPORAL</text>
+        <!-- Occipital -->
+        <text x="316" y="322" fill="rgba(159,122,234,0.55)" text-anchor="middle" font-size="10" letter-spacing="2">OCCIPITAL</text>
+        <text x="316" y="335" fill="rgba(159,122,234,0.38)" text-anchor="middle" font-size="8" letter-spacing="1">Visual Cortex</text>
+        <!-- Hippocampus note -->
+        <text x="162" y="320" fill="rgba(79,209,197,0.42)" text-anchor="middle" font-size="7" letter-spacing="0.5">Hippocampus</text>
+        <!-- Cerebellum -->
+        <text x="372" y="444" fill="rgba(246,173,85,0.55)" text-anchor="middle" font-size="10" letter-spacing="2">CEREBELLUM</text>
+        <text x="372" y="457" fill="rgba(246,173,85,0.38)" text-anchor="middle" font-size="8" letter-spacing="1">Motor Cortex · Cerebellum</text>
+        <!-- Whole brain indicator -->
+        <text x="630" y="138" fill="rgba(252,129,129,0.42)" text-anchor="start" font-size="8" letter-spacing="0.5">← Whole Brain</text>
+        <text x="630" y="149" fill="rgba(252,129,129,0.3)" text-anchor="start" font-size="7">(click outline)</text>
+      </g>
+
+      <!-- Leader lines -->
+      <g stroke="rgba(255,255,255,0.08)" stroke-width="0.8" fill="none" pointer-events="none">
+        <line x1="360" y1="120" x2="360" y2="148"/>
+        <line x1="314" y1="226" x2="314" y2="262"/>
+        <line x1="625" y1="142" x2="606" y2="156"/>
+        <line x1="162" y1="325" x2="162" y2="314"/>
+      </g>
+    </svg>
+
+    <!-- Region buttons below SVG -->
+    <div id="region-buttons">
+      <button class="rbtn" style="--btn-color:#fc8181" onclick="selectRegion('whole')">Whole Brain</button>
+      <button class="rbtn" style="--btn-color:#63b3ed" onclick="selectRegion('pfc')">PFC · NAc · Amygdala</button>
+      <button class="rbtn" style="--btn-color:#4fd1c5" onclick="selectRegion('hipp')">Hippocampus</button>
+      <button class="rbtn" style="--btn-color:#9f7aea" onclick="selectRegion('cortex')">Visual Cortex</button>
+      <button class="rbtn" style="--btn-color:#f6ad55" onclick="selectRegion('cerebellum')">Motor Cx · Cerebellum</button>
+    </div>
+  </div>
+
+  <p class="hint-text">↑ Click any region or button to explore research ↑</p>
+
+  <div id="research-panel">
+    <p class="panel-region-tag" id="panel-region-tag">Select a region</p>
+    <h3 class="panel-title" id="panel-title">Click a brain region above</h3>
+    <p class="panel-desc" id="panel-desc">Each region is associated with specific research projects. Click to explore the science, methods, and findings.</p>
+    <ul class="panel-bullets" id="panel-bullets"></ul>
+    <div class="pub-list" id="panel-pubs"></div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="content-section" id="experience">
+  <div class="section-header">
+    <h2>Experience</h2>
+    <span class="mono-label">// research & industry</span>
+  </div>
+  <div class="exp-grid">
+
+    <div class="exp-card" style="--card-accent: var(--glow-rose)">
+      <p class="exp-role">Cheminformatics Intern</p>
+      <p class="exp-org">Merck Research Laboratories, Cambridge</p>
+      <p class="exp-date">June 2025 – August 2025</p>
+      <ul class="exp-bullets">
+        <li>Built a data pipeline to identify functionally relevant proteins to a target of interest using protein families, domains, sequence homology, and interaction mechanisms.</li>
+        <li>Drew on Merck's chemical matter knowledge and external databases to recommend tool compounds to the Discovery Chemistry team.</li>
+      </ul>
+    </div>
+
+    <div class="exp-card" style="--card-accent: var(--glow-blue)">
+      <p class="exp-role">Undergraduate Researcher + Teaching Assistant</p>
+      <p class="exp-org">Big Data in Biology Research Lab, UT Austin</p>
+      <p class="exp-date">January 2023 – Present</p>
+      <ul class="exp-bullets">
+        <li>Examined gene expression differences across brain regions in binge-drinking–predisposed mice using bulk RNA-seq (R, Python).</li>
+        <li>Developed ML models to distinguish genetic lines based on binge-drinking–associated expression profiles.</li>
+        <li>Mentored 6 students on a spatial transcriptomics snRNA-seq project investigating cell type differences in Bipolar Disorder vs. Control human samples.</li>
+        <li>Hosted Python workshops and open houses; graded coding assignments for 25 students.</li>
+        <li>Earned 2023 Summer Fellowship Research Funding (1 of 4 recipients).</li>
+      </ul>
+    </div>
+
+    <div class="exp-card" style="--card-accent: var(--glow-cyan)">
+      <p class="exp-role">Undergraduate Research Assistant</p>
+      <p class="exp-org">Fonken Lab, UT Austin</p>
+      <p class="exp-date">November 2023 – Present</p>
+      <ul class="exp-bullets">
+        <li>Investigated how Mycobacterium vaccae immunization protects against neuroinflammation and cognitive decline in aged male mice using snRNA-seq (hdWGCNA, CellChat).</li>
+        <li>Examined communication differences in offspring of maternally immune-activated dams via ultrasonic vocalization analysis (MATLAB – DeepSqueak, VocalMat).</li>
+        <li>Explored how a two-hit stressor model alters microglial morphology in the hippocampus and prefrontal cortex using digital tracing in Imaris.</li>
+        <li>Investigating virome and microbiome composition differences between ASD and control siblings using bulk RNA-seq.</li>
+      </ul>
+    </div>
+
+    <div class="exp-card" style="--card-accent: var(--glow-violet)">
+      <p class="exp-role">Undergraduate Research Assistant</p>
+      <p class="exp-org">Snodderly Lab, UT Austin</p>
+      <p class="exp-date">August 2022 – June 2023</p>
+      <ul class="exp-bullets">
+        <li>Investigated how sex-linked polymorphic color vision shapes foraging behavior in New World monkeys using Support Vector Machine modeling.</li>
+        <li>Cleaned and organized 7 years of field data (2015–2022) to streamline integration with modeling scripts.</li>
+        <li>Developed a standardized documentation system to improve collaboration between field ecologists and data scientists.</li>
+      </ul>
+    </div>
+
+    <div class="exp-card" style="--card-accent: var(--glow-amber)">
+      <p class="exp-role">Machine Learning Interpretability Team Member</p>
+      <p class="exp-org">Longhorn NeuroTech Club, UT Austin</p>
+      <p class="exp-date">August 2024 – June 2025</p>
+      <ul class="exp-bullets">
+        <li>Evaluated models processing EEG signals using CNNs and Capsule Networks.</li>
+        <li>Applied the Captum package (integrated gradients, feature ablation) to improve model interpretability and performance.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- PUBLICATIONS -->
+<section class="content-section" id="publications">
+  <div class="section-header">
+    <h2>Publications</h2>
+    <span class="mono-label">// peer-reviewed work</span>
+  </div>
+  <div class="pubs-list">
+
+    <div class="pub-card">
+      <p class="pub-card-title">Guerin, S.P., Sanchez, K., <strong>Verma, A.</strong>, Salem, N.A., Mayfield, R.D. & Fonken, L.K. (2025). Mycobacterium vaccae immunization ameliorates the inflammatory environment in the aging brain. <em>Journal of Neuroimmunology.</em></p>
+      <span class="pub-card-status">Under Review</span>
+    </div>
+
+    <div class="pub-card">
+      <p class="pub-card-title">Davis, L.K., Anders, M.M, <strong>Verma, A.</strong>, San Miguel, D.A., Ince, L.M., Donegan, J.J. & Fonken, L.K. (2025). Cytotoxic T cells are enriched in mice susceptible to the behavioral sequelae induced by maternal immune activation.</p>
+      <span class="pub-card-status">In Preparation</span>
+    </div>
+
+    <div class="pub-card">
+      <p class="pub-card-title"><strong>Verma, A.</strong>, Saigusa, J., Zhang, X., Keist, M., Mayfield, D., Arasappan, D. Identifying Predictive Genes for Binge-Drinking in Mice Across Brain Regions.</p>
+      <span class="pub-card-status">In Preparation</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- PRESENTATIONS -->
+<section class="content-section" id="presentations">
+  <div class="section-header">
+    <h2>Presentations</h2>
+    <span class="mono-label">// conferences & symposia</span>
+  </div>
+
+  <p style="font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--glow-amber);margin-bottom:1.2rem;">Slides-Based</p>
+  <div class="pres-grid" style="margin-bottom:2rem">
+    <div class="pres-card">
+      <p class="pres-type">Talk</p>
+      <p class="pres-title">Tool Molecule Recommendation for Functionally Relevant Proteins to Targets of Interest</p>
+      <p class="pres-venue">Merck Cheminformatics Group Meeting</p>
+      <p class="pres-date">August 2025</p>
+    </div>
+    <div class="pres-card">
+      <p class="pres-type">Talk</p>
+      <p class="pres-title">Tool Molecule Recommendation for Functionally Relevant Proteins to Targets of Interest</p>
+      <p class="pres-venue">Merck Discovery Chemistry – Modeling & Informatics Group Meeting</p>
+      <p class="pres-date">July 2025</p>
+    </div>
+    <div class="pres-card">
+      <p class="pres-type">Flash Talk</p>
+      <p class="pres-title">Tool Molecule Recommendation for Functionally Relevant Proteins to Targets of Interest</p>
+      <p class="pres-venue">Merck Discovery Chemistry Flash Talk Session</p>
+      <p class="pres-date">July 2025</p>
+    </div>
+    <div class="pres-card">
+      <p class="pres-type">Talk</p>
+      <p class="pres-title">Ultrasonic Vocalizations in Mice: Exploring ASD-Linked Effects of Maternal Immune Activation</p>
+      <p class="pres-venue">STEM Muse UT Austin & ACC Research Symposium</p>
+      <p class="pres-date">October 2024</p>
+    </div>
+    <div class="pres-card">
+      <p class="pres-type">Talk (Virtual)</p>
+      <p class="pres-title">Identifying Predictive Genes for Binge-Drinking Across Brain Regions</p>
+      <p class="pres-venue">Heart of Texas Research Conference, Baylor University</p>
+      <p class="pres-date">April 2024</p>
+    </div>
+    <div class="pres-card">
+      <p class="pres-type">Talk</p>
+      <p class="pres-title">Gene Expression Profiling Across Brain Regions in a Mouse Model of Binge-like Alcohol Drinking</p>
+      <p class="pres-venue">Capital of Texas Undergraduate Research Conference, UT Austin</p>
+      <p class="pres-date">March 2024</p>
+    </div>
+  </div>
+
+  <p style="font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--glow-violet);margin-bottom:1.2rem;">Poster Presentations</p>
+  <div class="pres-grid">
+    <div class="pres-card">
+      <p class="pres-type">Poster · Travel Scholarship</p>
+      <p class="pres-title">Impact of Mycobacterium vaccae on Neuroinflammation in Aging Rats</p>
+      <p class="pres-venue">ABRCMS 2025, Henry B. Gonzalez Convention Center, San Antonio</p>
+      <p class="pres-date">November 2025 · Full travel scholarship</p>
+    </div>
+    <div class="pres-card">
+      <p class="pres-type">Poster</p>
+      <p class="pres-title">Tool Molecule Recommendation for Functionally Relevant Proteins to Targets of Interest</p>
+      <p class="pres-venue">Merck Research Laboratories Annual Cambridge & Boston Intern Poster Sessions</p>
+      <p class="pres-date">August 2025</p>
+    </div>
+    <div class="pres-card">
+      <p class="pres-type">Poster</p>
+      <p class="pres-title">Impact of Mycobacterium vaccae on Neuroinflammation in Aging Rats</p>
+      <p class="pres-venue">Undergraduate Research Forum, UT Austin</p>
+      <p class="pres-date">April 2025</p>
+    </div>
+    <div class="pres-card">
+      <p class="pres-type">Poster</p>
+      <p class="pres-title">Impact of Maternal Immune Activation on Ultrasonic Vocalizations in Mice</p>
+      <p class="pres-venue">Center for Molecular Carcinogenesis and Toxicology Symposium, UT Austin</p>
+      <p class="pres-date">December 2024</p>
+    </div>
+    <div class="pres-card">
+      <p class="pres-type">Poster</p>
+      <p class="pres-title">Identifying Predictive Genes for Binge-Drinking Across Brain Regions</p>
+      <p class="pres-venue">Longhorn Research Session · Undergraduate Research Forum · Waggoner Center Advance · CBRS Showcase — UT Austin</p>
+      <p class="pres-date">April – May 2024</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Arshia Verma &nbsp;·&nbsp; UT Austin</p>
+  <p style="margin-top:0.5rem;color:var(--text-dim)">Built with care · Deployed on GitHub Pages</p>
+</footer>
+
+<script>
+// ── STAR FIELD ──
+const starCanvas = document.getElementById('stars');
+const starCtx = starCanvas.getContext('2d');
+let stars = [];
+function resizeStars() { starCanvas.width = window.innerWidth; starCanvas.height = window.innerHeight; }
+function initStars() {
+  stars = [];
+  for (let i = 0; i < 180; i++) {
+    stars.push({ x: Math.random()*starCanvas.width, y: Math.random()*starCanvas.height,
+      r: Math.random()*1.1, opacity: Math.random()*0.5+0.1, speed: Math.random()*0.15+0.04 });
+  }
+}
+function drawStars() {
+  starCtx.clearRect(0,0,starCanvas.width,starCanvas.height);
+  stars.forEach(s => {
+    starCtx.beginPath(); starCtx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    starCtx.fillStyle = `rgba(180,210,255,${s.opacity})`; starCtx.fill();
+    s.opacity += Math.sin(Date.now()*s.speed*0.001)*0.003;
+  });
+  requestAnimationFrame(drawStars);
+}
+resizeStars(); initStars(); drawStars();
+window.addEventListener('resize', ()=>{ resizeStars(); initStars(); });
+
+// ── REGION DATA ──
+const regions = {
+  whole: {
+    color: 'var(--glow-rose)',
+    tag: 'Whole Brain / Cheminformatics',
+    title: 'Protein Target Identification · Merck Research Labs',
+    desc: 'At the systems level, understanding which proteins are functionally relevant to a drug target requires integrating data across entire biological networks. During my internship at Merck, I built computational pipelines to navigate this complexity.',
+    bullets: [
+      'Built a data pipeline to identify functionally relevant proteins to a protein target of interest using protein families, domains, sequence homology, and interaction mechanisms.',
+      "Drew on Merck's knowledge of chemical matter around these proteins and external databases to recommend tool compounds to the Discovery Chemistry team."
+    ],
+    pubs: [],
+    presentations: [
+      'Verma, A., Kemis, J., Veiga, M. — "Tool Molecule Recommendation for Functionally Relevant Proteins to Targets of Interest." Merck Research Laboratories Annual Cambridge Intern Poster Session, August 2025.',
+      'Verma, A., Kemis, J., Veiga, M. — "Tool Molecule Recommendation for Functionally Relevant Proteins to Targets of Interest." Merck Research Laboratories Annual Boston Intern Poster Session, August 2025.',
+      'Verma, A., Kemis, J., Veiga, M. — "Tool Molecule Recommendation for Functionally Relevant Proteins to Targets of Interest." Merck Cheminformatics Group Meeting, August 2025.',
+      'Verma, A., Kemis, J., Veiga, M. — "Tool Molecule Recommendation for Functionally Relevant Proteins to Targets of Interest." Merck Discovery Chemistry – Modeling and Informatics Group Meeting, July 2025.',
+      'Verma, A., Kemis, J., Veiga, M. — "Tool Molecule Recommendation for Functionally Relevant Proteins to Targets of Interest." Merck Discovery Chemistry Flash Talk Session, July 2025.'
+    ]
+  },
+  pfc: {
+    color: 'var(--glow-blue)',
+    tag: 'Nucleus Accumbens · Amygdala · Prefrontal Cortex',
+    title: 'Binge-Drinking Gene Expression · Big Data in Biology Lab',
+    desc: 'Alcohol use disorder involves circuit-level changes across reward, emotional, and executive regions — the nucleus accumbens, amygdala, and prefrontal cortex. My work in the Big Data in Biology Lab maps the molecular signatures underlying binge-drinking predisposition across these regions.',
+    bullets: [
+      'Examined how gene expression patterns differ across brain regions in mice with a genetic predisposition for binge drinking using bulk RNA-seq analysis (R, Python).',
+      'Identified key features linked to binge-drinking behavior through clustering and visualization techniques.',
+      'Developed machine learning models to determine whether genetic lines could be distinguished based on binge-drinking–associated gene expression profiles.',
+      'Mentored 6 second-year students on a spatial transcriptomics snRNA-seq project investigating cell type differences and ligand–receptor interactions in Bipolar Disorder vs. Control human samples.',
+      'Hosted Python workshops; graded coding assignments for 25 students. Earned 2023 Summer Fellowship Research Funding (1 of 4 recipients).'
+    ],
+    pubs: [
+      { text: 'Verma, A., Saigusa, J., Zhang, X., Keist, M., Mayfield, D., Arasappan, D. — Identifying Predictive Genes for Binge-Drinking in Mice Across Brain Regions.', status: 'In Preparation' }
+    ],
+    presentations: [
+      'Verma, A., Zhang, X., Saigusa, J. — "Identifying Predictive Genes for Binge-Drinking Across Brain Regions." Heart of Texas Research Conference, Baylor University, April 2024 (virtual).',
+      'Verma, A., Zhang, X., Saigusa, J. — "Gene Expression Profiling Across Brain Regions in a Mouse Model of Binge-like Alcohol Drinking." Capital of Texas Undergraduate Research Conference, UT Austin, March 2024.',
+      'Verma, A., Zhang, X., Saigusa, J. — "Identifying Predictive Genes for Binge-Drinking Across Brain Regions." Longhorn Research Session, UT Austin, April 2024.',
+      'Verma, A., Zhang, X., Saigusa, J. — "Identifying Predictive Genes for Binge-Drinking Across Brain Regions." Undergraduate Research Forum, UT Austin, April 2024.',
+      'Verma, A., Zhang, X., Saigusa, J. — "Identifying Predictive Genes for Binge-Drinking Across Brain Regions." Waggoner Center for Alcohol & Addiction Research Advance, UT Austin, April 2024.',
+      'Verma, A., Zhang, X., Saigusa, J. — "Identifying Predictive Genes for Binge-Drinking Across Brain Regions." Center for Biomedical Research Support Showcase, UT Austin, May 2024.'
+    ]
+  },
+  hipp: {
+    color: 'var(--glow-cyan)',
+    tag: 'Hippocampus',
+    title: 'Neuroinflammation, Aging & ASD · Fonken Lab',
+    desc: 'The hippocampus is a primary site of neuroinflammation, memory consolidation, and vulnerability to aging and immune dysregulation. My work in the Fonken Lab examines how immunization, maternal immune activation, and microbiome differences affect this region.',
+    bullets: [
+      'Investigated how Mycobacterium vaccae immunization protects against neuroinflammation and cognitive decline in aged male mice using snRNA-seq analysis (hdWGCNA, CellChat).',
+      'Examined communication differences in offspring of maternally immune-activated dams through ultrasonic vocalization analysis (MATLAB – DeepSqueak, VocalMat).',
+      'Explored how a two-hit stressor model alters microglial morphology and neuroinflammatory responses in the hippocampus and prefrontal cortex using digital tracing in Imaris.',
+      'Investigating whether virome and microbiome composition differ between ASD and control siblings using bulk RNA-seq data.'
+    ],
+    pubs: [
+      { text: 'Guerin, S.P., Sanchez, K., Verma, A., Salem, N.A., Mayfield, R.D. & Fonken, L.K. (2025). Mycobacterium vaccae immunization ameliorates the inflammatory environment in the aging brain. Journal of Neuroimmunology.', status: 'Under Review' },
+      { text: 'Davis, L.K., Anders, M.M, Verma, A., San Miguel, D.A., Ince, L.M., Donegan, J.J. & Fonken, L.K. (2025). Cytotoxic T cells are enriched in mice susceptible to the behavioral sequelae induced by maternal immune activation.', status: 'In Preparation' }
+    ],
+    presentations: [
+      'Verma, A., Guerin, S., Sanchez, K., Mayfield, D., Fonken, L. — "Impact of Mycobacterium vaccae on Neuroinflammation in Aging Rats." ABRCMS 2025, San Antonio, November 2025. (Accepted with full travel scholarship)',
+      'Verma, A., Guerin, S., Sanchez, K., Mayfield, D., Fonken, L. — "Impact of Mycobacterium vaccae on Neuroinflammation in Aging Rats." Undergraduate Research Forum, UT Austin, April 2025.',
+      'Verma, A., Davis, L., Fonken, L. — "Ultrasonic Vocalizations in Mice: Exploring ASD-Linked Effects of Maternal Immune Activation." STEM Muse UT Austin & ACC Research Symposium, October 2024.',
+      'Verma, A., Davis, L., Fonken, L. — "Impact of Maternal Immune Activation on Ultrasonic Vocalizations in Mice." Center for Molecular Carcinogenesis and Toxicology Symposium, UT Austin, December 2024.'
+    ]
+  },
+  cortex: {
+    color: 'var(--glow-violet)',
+    tag: 'Visual Cortex',
+    title: 'Color Vision & Foraging Behavior · Snodderly Lab',
+    desc: 'The visual cortex processes chromatic information, and polymorphic color vision in New World monkeys offers a natural experiment in how sensory variation shapes ecological behavior. My work in the Snodderly Lab modeled this relationship computationally.',
+    bullets: [
+      'Investigated how sex-linked polymorphic color vision shapes foraging behavior in New World monkeys using Support Vector Machine modeling.',
+      'Cleaned and organized 7 years of field data (2015–2022) to streamline integration with modeling scripts.',
+      'Developed a standardized documentation system to improve collaboration between field ecologists and data scientists.'
+    ],
+    pubs: [], presentations: []
+  },
+  cerebellum: {
+    color: 'var(--glow-amber)',
+    tag: 'Motor Cortex · Cerebellum',
+    title: 'EEG Signal Interpretation · Longhorn NeuroTech',
+    desc: 'Motor and cerebellar circuits produce the coordinated neural signals captured in EEG recordings. My work with Longhorn NeuroTech focused on improving the interpretability of deep learning models trained on these signals.',
+    bullets: [
+      'Worked with a team to evaluate models that process EEG signals using CNNs and Capsule Networks.',
+      'Used the Captum package (integrated gradients, feature ablation, etc.) to improve model performance and interpretability.'
+    ],
+    pubs: [], presentations: []
+  }
+};
+
+function selectRegion(key) {
+  const data = regions[key];
+  if (!data) return;
+
+  // Hide all highlights
+  document.querySelectorAll('.hl-overlay').forEach(el => el.style.display = 'none');
+  const hl = document.getElementById('hl-' + key);
+  if (hl) hl.style.display = 'block';
+
+  // Update buttons
+  document.querySelectorAll('.rbtn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('onclick') === `selectRegion('${key}')`);
+  });
+
+  // Update panel
+  const panel = document.getElementById('research-panel');
+  panel.style.setProperty('--panel-accent', data.color);
+  document.getElementById('panel-region-tag').textContent = '// ' + data.tag;
+  document.getElementById('panel-region-tag').style.color = data.color;
+  document.getElementById('panel-title').textContent = data.title;
+  document.getElementById('panel-desc').textContent = data.desc;
+  document.getElementById('panel-bullets').innerHTML = data.bullets.map(b => `<li>${b}</li>`).join('');
+
+  let pubsHTML = '';
+  if (data.pubs && data.pubs.length > 0) {
+    pubsHTML += `<p style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.6rem;margin-top:0.8rem;">Related Publications</p>` +
+      data.pubs.map(p => `<div class="pub-item">${p.text} <span class="pub-status">${p.status}</span></div>`).join('');
+  }
+  if (data.presentations && data.presentations.length > 0) {
+    pubsHTML += `<p style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.6rem;margin-top:1rem;">Related Presentations</p>` +
+      data.presentations.map(p => `<div class="pub-item">${p}</div>`).join('');
+  }
+  document.getElementById('panel-pubs').innerHTML = pubsHTML;
+  panel.classList.add('visible');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+</script>
+</body>
+</html>
